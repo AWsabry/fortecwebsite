@@ -1,0 +1,71 @@
+/*
+#main-color: #1f69b2
+#primary-color: #df1b25
+#secondary-color: #7d8081
+*/
+img {
+    object-fit: cover;
+}
+.card {
+    transition: all ease-in-out 0.5s;
+    box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px, rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
+}
+
+.card:hover {
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+.card .loading {
+    
+    width: 0.1px;
+    height: 1px;
+    transition: 0.3s ease-in-out;
+    margin-left: auto;
+    margin-right: auto;
+}
+.card:hover .loading {
+    
+    width: 100%;
+
+}
+@media (min-width: 992px) {
+    .sticky-menu.fixed {
+    
+     background-color: rgba(255, 255, 255, .15);  
+     backdrop-filter: blur(5px);
+    }
+    .navbar-toggler-icon {
+        display: none;
+    }
+}
+.nav-link {
+    width: fit-content;
+}
+.sticky-menu * {
+    color:#7d8081 !important;
+}
+.list-nav {
+    position: relative;
+}
+.list-nav::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    width: 0;
+    transition: all ease-in-out .3s;
+    height: 1.5px;
+    background-color: #1f69b2;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+.list-nav:hover::after {
+    width: 100%;
+}
+.theme-main-menu .contact-button.button-white-bg:hover {
+    color: white !important;
+}
+.theme-main-menu .contact-button.button-white-bg::before {
+    background-color: #1f69b2;
+}
