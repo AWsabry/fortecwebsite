@@ -293,10 +293,6 @@
     background: #fff;
 }
 
-::-webkit-scrollbar-thumb {
-    background: var(--rose-gr-bg);
-    border-radius: 30px;
-}
 
 :root {
     --text-color: #8a919c;

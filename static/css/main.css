@@ -3,6 +3,26 @@
 #primary-color: #df1b25
 #secondary-color: #7d8081
 */
+:root {
+    --text-color: #8a919c;
+    --text-light: #c0c0c9;
+    --text-dark: #313131;
+    --heading: #2A2A2A;
+    --p-rose: #2b44d3;
+    --rose-gr-bg: linear-gradient( -90deg, rgb(84, 46, 221) 0%, rgb(35, 35, 41) 100%);
+    --rose-gr-reverse: linear-gradient( -90deg, rgb(50, 29, 236) 0%, rgb(76, 70, 94) 100%);
+    --p-green: #0de49d;
+    --p-orange: #ff8618;
+    --cyan: #1aceff;
+    --redOne: #2b44d3;
+    --main-color: #1f69b2;
+    --primary-color: #df1b25;
+    --secondary-color: #7d8081
+}
+::-webkit-scrollbar-thumb {
+    background: var(--main-color) !important;
+    border-radius: 30px;
+}
 img {
     object-fit: cover;
 }
