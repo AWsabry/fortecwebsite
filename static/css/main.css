@@ -3,6 +3,10 @@
 #primary-color: #df1b25
 #secondary-color: #7d8081
 */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech&display=swap');
+* {
+    font-family: 'Share Tech', sans-serif !important;
+}
 :root {
     --text-color: #8a919c;
     --text-light: #c0c0c9;
@@ -18,6 +22,56 @@
     --main-color: #1f69b2;
     --primary-color: #df1b25;
     --secondary-color: #7d8081
+}
+.color-white {
+    color: white;
+}
+.button-custom {
+    cursor: pointer;
+    transition: all ease-in-out .2s;
+}
+button {
+    transition: all .2s ease-in-out;
+    justify-content: center;
+    align-items: center;
+}
+.show-on-hover {
+
+    transition: all ease-in-out .4s;
+    width: 0px;
+    overflow: hidden;
+    height: 0px;
+}
+button:hover .show-on-hover {
+    width: 90px;
+    height: 30px;
+}
+button:hover {
+    border-radius: 20px !important;
+}
+button:hover .rounded-circle {
+    border-radius: 0%;
+}
+.button-custom:hover {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;}
+.bg-main, .bg-main:hover {
+    background-color: var(--main-color) !important;
+}
+.bg-myprimary, .bg-myprimary:hover {
+    background-color: var(--primary-color) !important;
+}
+button:hover {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+
+}
+.color-main {
+    color: var(--main-color);
+}
+.color-primary {
+    color: var(--primary-color);
+}
+button.scroll-top.tran3s {
+    background: var(--main-color);
 }
 ::-webkit-scrollbar-thumb {
     background: var(--main-color) !important;

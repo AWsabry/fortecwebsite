@@ -1,15 +1,26 @@
 {% load static %}
-<div class="card px-1 my-2">
+<div class="card my-2">
     <img class="card-img-top border-bottom" src="{%static '/images/01.png'%}" alt="Card image cap">
-    <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">Some quick example text to build on the card title and make
-            up
-            the
-            bulk of the card's content.</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+    <div class="card-body px-1 ">
+        <h4 class="card-title text-center">Product Name</h4>
+        <h5 class="card-text color-primary py-1 text-center">40.00<span>EGP</span></h5>
+        <p class="card-text text-center">Some description here</p>
     </div>
-    <div class="bg-primary loading">
+    <div class="text-center pt-3 pb-4 container d-flex justify-content-center">
+        <button class="rounded-circle px-2 mx-2 bg-main p-2 d-flex color-white align-items-center">
+            <img src="{%static '/images/icon/bag-add-outline.svg'%}" width="30" height="30" class="button-custom">
+            <span class="show-on-hover ">
+                cart
+            </span>
+        </button>
+        <button class="rounded-circle px-2 mx-2 bg-myprimary p-2 d-flex color-white align-items-center">
+            <span class="show-on-hover ">
+                Favorite
+            </span>
+            <img src="{%static '/images/icon/heart-outline.svg'%}" width="30" height="30" class="button-custom">
+        </button>
 
+    </div>
+    <div class="bg-main loading">
     </div>
 </div>
