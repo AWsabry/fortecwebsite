@@ -90,18 +90,22 @@ img {
 }
 .card .loading {
     
-    width: 0.1px;
+    width: 0.001px;
+    opacity: 0;
     height: 1px;
     transition: 0.3s ease-in-out;
     margin-left: auto;
     margin-right: auto;
 }
 .card:hover .loading {
-    
+    opacity: 1;
     width: 100%;
 
 }
 @media (min-width: 992px) {
+    .loginform.w-80 {
+        max-width: 50% !important;
+    }
     .sticky-menu.fixed {
     
      background-color: rgba(255, 255, 255, .15);  

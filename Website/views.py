@@ -1,11 +1,15 @@
 from datetime import datetime
+from os import error
 from django.http import request
 from django.shortcuts import redirect, render
+from django.urls.base import reverse
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 import uuid
+from oauth2client.client import Error
 import pyrebase
+
 import json
 from .decorators import login_session_required
 
@@ -29,7 +33,8 @@ firebaseConfig = {
 firebase_admin.initialize_app(cred)
 firebase = pyrebase.initialize_app(firebaseConfig)
 storage = firebase.storage()
-
+database = firebase.database()
+auth = firebase.auth()
 
 db = firestore.client()
 
@@ -38,7 +43,22 @@ def index(request):
     return render(request, 'index.html')
 
 
-def contacts(request):
+def signIn(request, msg=''):
+    return render(request, 'signIn.html')
+
+
+def postSignIn(request):
+
+    try:
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        auth.sign_in_with_email_and_password(email, password)
+        return redirect('/', request)
+    except error:
+        return redirect(reverse('signin', args=request, kwargs={'msg': 'id'}))
+
+
+''' def contacts(request):
     if request.method == 'POST':
         try:
             firstName = request.POST.get('firstName')
@@ -68,8 +88,8 @@ def contacts(request):
     else:
         print("GETTING")
     return render(request, 'contacts.html')
-
-
+ '''
+'''
 @login_session_required(login_url='contacts')
 def shop(request,):
     from google.cloud import firestore
@@ -80,7 +100,7 @@ def shop(request,):
 
     print(Email)
 
-    #request.session['Email'] = Email
+    # request.session['Email'] = Email
 
     for i in passed_values:
         id = i['id']
@@ -177,5 +197,5 @@ def checkout(request):
 @login_session_required(login_url='contacts')
 def thankyou(request):
     return render(request, 'thankyou.html')
-
+ '''
 # /home/XEatsNew/X-Eats-Website
