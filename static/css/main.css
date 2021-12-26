@@ -43,7 +43,7 @@ button {
     overflow: hidden;
     height: 0px;
 }
-button:hover .show-on-hover {
+a:hover .show-on-hover {
     width: 90px;
     height: 30px;
 }
