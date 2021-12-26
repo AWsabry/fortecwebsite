@@ -1,5 +1,5 @@
 from datetime import datetime
-from os import error
+from os import error, name
 from django.http import request
 from django.shortcuts import redirect, render
 from django.urls.base import reverse
@@ -8,6 +8,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 import uuid
 from oauth2client.client import Error
+from pyasn1.type.univ import Null
 import pyrebase
 
 import json
@@ -17,17 +18,17 @@ from .decorators import login_session_required
 
 
 cred = credentials.Certificate(
-    "fortec-a7359-firebase-adminsdk-7mldo-40b32c1cf6.json")
+    "trutech-464cb-firebase-adminsdk-4v8do-68464c2077.json")
 
 firebaseConfig = {
-    'apiKey': "AIzaSyAIYbpmmvXfuExHgUOuQxKvOVVl7Lx4qCs",
-    'authDomain': "fortec-a7359.firebaseapp.com",
-    'databaseURL': "https://fortec-a7359-default-rtdb.firebaseio.com",
-    'projectId': "fortec-a7359",
-    'storageBucket': "fortec-a7359.appspot.com",
-    'messagingSenderId': "870315177780",
-    'appId': "1:870315177780:web:a18fb35998b21a55aa9761",
-    'measurementId': "G-6S9M7LCZGV"
+    'apiKey': "AIzaSyBuY3CpF5V6Kceyr5QelfTRocZyIVhvyhw",
+    'authDomain': "trutech-464cb.firebaseapp.com",
+    'databaseURL': "https://trutech-464cb-default-rtdb.firebaseio.com",
+    'projectId': "trutech-464cb",
+    'storageBucket': "trutech-464cb.appspot.com",
+    'messagingSenderId': "756831507071",
+    'appId': "1:756831507071:web:282ed47a41c197cfc4e54a",
+    'measurementId': "G-7D8TL4JSLW"
 
 }
 firebase_admin.initialize_app(cred)
@@ -58,11 +59,11 @@ def signIn(request):
         try:
             email = request.POST.get('email')
             password = request.POST.get('password')
-            auth.sign_in_with_email_and_password(email, password)
+            user = auth.sign_in_with_email_and_password(email, password)
             userGet = db.collection('users').document(email)
             usersdocs = userGet.get().to_dict()
-            request.session['name'] = usersdocs['firstName'] + ' '
-            + usersdocs.lastName
+            request.session['uid'] = user
+            request.session['name'] = usersdocs['firstName']
             request.session['email'] = email
             return redirect('index')
         except Exception as e:
@@ -77,29 +78,36 @@ def signUp(request):
     msg = ''
     if request.method == 'POST':
         try:
+
             firstName = request.POST.get('firstName')
             lastName = request.POST.get('lastName')
             phone = request.POST.get('phone')
             email = request.POST.get('email')
             password = request.POST.get('password')
-            user = auth.create_user_with_email_and_password(email, password)
-            new_doc_ref = db.collection('users').document(email)
-            data = {
-                'firstName': firstName,
-                'lastName': lastName,
-                'Email': email,
-                'total': 0,
-                'phone': phone,
-                'uid': user,
-                'city': '',
-                'cart': [],
-            }
-            new_doc_ref.set(data),
-            session_id = user['idToken']
-            request.session['email'] = email
-            request.session['name'] = firstName + ' '+lastName
-            request.session['uid'] = str(session_id)
-            return redirect('index')
+            confirmpassword = request.POST.get('confirmpassword')
+            if password == confirmpassword:
+
+                user = auth.create_user_with_email_and_password(
+                    email, password)
+                new_doc_ref = db.collection('users').document(email)
+                data = {
+                    'firstName': firstName,
+                    'lastName': lastName,
+                    'Email': email,
+                    'total': 0,
+                    'phone': phone,
+                    'uid': user,
+                    'city': '',
+                    'cart': [],
+                }
+                new_doc_ref.set(data),
+                session_id = user['idToken']
+                request.session['email'] = email
+                request.session['name'] = firstName + ' '+lastName
+                request.session['uid'] = str(session_id)
+                return redirect('index')
+            else:
+                msg = "Password and confirm password doesn't match!"
         except Exception as e:
             print(e)
             msg = "Your password should be at least 6 char!"
@@ -113,6 +121,52 @@ def logout(request):
     del request.session['uid']
     del request.session['email']
     return render(request, 'signIn.html')
+
+
+def categories(request):
+    categories = [
+        {
+            'name': 'mostsold',
+            'img': 'any.png'
+        },
+        {
+            'name': 'Second Category',
+            'img': 'any.png'
+        },
+        {
+            'name': 'Third Category',
+            'img': 'any.png'
+        },
+        {
+            'name': 'Fourth Category',
+            'img': 'any.png'
+        },
+
+    ]
+    return render(request, 'categories.html', {'categories': categories})
+
+
+def products(request, category=''):
+    if (len(category)):
+        docs = db.collection('products').where(
+            'category', '==', category).get()
+    else:
+        docs = db.collection('products').get()
+    result = [doc.to_dict() for doc in docs]
+    print(str(result))
+    return render(request, 'shop.html', {'docs': result})
+
+
+def cart(request):
+    if (len(request.session.keys()) > 0):
+        print(request.session['email'])
+        doc = db.collection('users').document(request.session['email']).get()
+        cart = doc.to_dict()
+        print(cart)
+        return render(request, 'cart.html', {'cart': cart})
+
+    else:
+        return redirect('login')
 
 
 ''' def contacts(request):
@@ -179,33 +233,45 @@ def shop(request,):
 def productDetails(request, id):
     ProductsGet = db.collection('products').document(str(id))
     doc = ProductsGet.get().to_dict()
-
+    print("jjjjjjjjjjjjjjjjjjjjjjj")
+    print(request.session.keys())
     if request.method == 'POST':
         try:
-            email = request.session['email']
-            userGet = db.collection('users').document(email)
-            usersdocs = userGet.get().to_dict()
-            Quantity = request.POST.get('Quantity')
-            request.session['email'] = email
-            cartItem = {
-                'ProductName': doc['name'],
-                'Quantity': int(Quantity),
-                'Price': doc['price'],
-                'Category': doc['category'],
-                'ProductID': doc['id']
-            }
+            if len(request.session.keys()) > 0:
+                email = request.session['email']
+                userGet = db.collection('users').document(email)
+                usersdocs = userGet.get().to_dict()
+                Quantity = request.POST.get('Quantity')
+                request.session['email'] = email
+                cartItem = {
+                    'ProductName': doc['name'],
+                    'Quantity': int(Quantity),
+                    'Price': doc['price'],
+                    'Category': doc['category'],
+                    'ProductID': doc['id']
+                }
 
-            totalPrice = int(Quantity) * doc['price']
-            total = usersdocs['total'] + totalPrice
+                totalPrice = int(Quantity) * doc['price']
+                total = usersdocs['total'] + totalPrice
+                if not any(d['ProductName'] == doc['name'] for d in usersdocs['cart']):
 
-            cart = usersdocs['cart']
-            cart.append(cartItem)
-            print(cart)
-            userGet.update({
-                'cart': cart,
-                'total': total
-            })
-            return redirect('checkout')
+                    cart = usersdocs['cart']
+                    cart.append(cartItem)
+                else:
+                    for d in range(len(usersdocs['cart'])):
+                        if (usersdocs['cart'][d]['ProductName'] == cartItem['ProductName']):
+                            usersdocs['cart'][d]['Quantity'] += 1
+                            cart = usersdocs['cart']
+                            break
+                print(cart)
+                userGet.update({
+                    'cart': cart,
+                    'total': total
+                })
+                return redirect('checkout')
+            else:
+                print("hereeeeeeeeeeeeeeeeee")
+                return redirect('signin')
         except Exception as e:
             print(str(e))
     else:

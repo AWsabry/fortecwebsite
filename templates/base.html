@@ -101,19 +101,26 @@
 
 					<div class="navbar-nav">
 						<a class="list-nav nav-item nav-link" href="/">Home</a>
-						<a class="list-nav nav-item nav-link" href="/Categories">Categories</a>
+						<a class="list-nav nav-item nav-link" href="/categories">Categories</a>
 						<a class="list-nav nav-item nav-link" href="/products">Products</a>
+						{% if request.session.uid%}
+						<a class="list-nav nav-item nav-link" href="/cart">Cart</a>
+						{%endif%}
 					</div>
 
 					<div class="col-12 col-md-4 right-content ml-auto order-lg-3 d-flex">
 						{% if request.session.uid%}
+						<a href="/logout"
+							class=" ml-auto theme-btn line-button-one button-rose contact-button button-white-bg">
+							Logout
+						</a>
 						{%else%}
 						<a href="/signin"
 							class=" ml-auto theme-btn line-button-one button-rose contact-button button-white-bg">
 							Login | SignUp
 						</a>
 						{%endif%}
-						{{request.session.name}}
+
 					</div>
 			</nav>
 

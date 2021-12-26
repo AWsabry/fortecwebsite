@@ -37,6 +37,7 @@
 						<h3 class="product-name">{{ProductsGet.name}}</h3>
 						<strong class="price">L.E {{ProductsGet.price}}</strong>
 						<p>Category : {{ProductsGet.category}}</p>
+						<p>Description : {{ProductsGet.description}}</p>
 						<div class="customize-order d-sm-flex align-items-top">
 							<form method="POST" type="POST" class="checkout-form" role="form">
 								{% csrf_token %}

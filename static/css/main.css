@@ -31,7 +31,7 @@
     cursor: pointer;
     transition: all ease-in-out .2s !important;
 }
-button {
+button,a {
     transition: all .2s ease-in-out !important;
     justify-content: center;
     align-items: center;
@@ -43,14 +43,14 @@ button {
     overflow: hidden;
     height: 0px;
 }
-a:hover .show-on-hover {
+a:hover .show-on-hover , button:hover .show-on-hover{
     width: 90px;
     height: 30px;
 }
-button:hover {
+a:hover, button:hover {
     border-radius: 20px !important;
 }
-button:hover .rounded-circle {
+a:hover .rounded-circle {
     border-radius: 0%;
 }
 .button-custom:hover {
