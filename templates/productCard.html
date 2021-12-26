@@ -1,6 +1,6 @@
 {% load static %}
 <div class="card my-2">
-    <img class="card-img-top border-bottom" src="{%static '/images/01.png'%}" alt="Card image cap">
+    <img class="card-img-top border-bottom" src="{{product.image}}" alt="Card image cap">
     <div class="card-body px-1 ">
         <h4 class="card-title text-center">{{product.name}}</h4>
         <h5 class="card-text color-primary py-1 text-center">{{product.price}}<span>EGP</span></h5>
