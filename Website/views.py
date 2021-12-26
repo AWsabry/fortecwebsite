@@ -236,7 +236,6 @@ def shop(request,):
 def productDetails(request, id):
     ProductsGet = db.collection('products').document(str(id))
     doc = ProductsGet.get().to_dict()
-    print("jjjjjjjjjjjjjjjjjjjjjjj")
     print(request.session.keys())
     if request.method == 'POST':
         try:
@@ -271,9 +270,8 @@ def productDetails(request, id):
                     'cart': cart,
                     'total': total
                 })
-                return redirect('checkout')
+                return redirect('cart')
             else:
-                print("hereeeeeeeeeeeeeeeeee")
                 return redirect('signin')
         except Exception as e:
             print(str(e))
