@@ -25,12 +25,14 @@
                     <div class="">
 
                         <div class="row">
-                            <div class="col-12 col-md-4 col-lg-3">
+                            {% for product in mostSold %}
+                            <div class="col-12 px-0 col-md-4 col-lg-3 px-1">
 
-                                {%include "productCard.html"%}
 
+                                {%include "productCard.html" with product=product%}
 
                             </div>
+                            {%endfor%}
 
                         </div>
                     </div>
@@ -42,6 +44,7 @@
         <div class="main-wrapper pos-r">
             <div>
                 <h4 class="my-3">
+
                     New Products
                 </h4>
                 <hr />
@@ -49,18 +52,14 @@
                     <div class="">
 
                         <div class="row">
-
+                            {% for product in newProducts %}
                             <div class="col-12 px-0 col-md-4 col-lg-3 px-1">
 
 
-                                {%include "productCard.html"%}
+                                {%include "productCard.html" with product=product%}
 
                             </div>
-                            <div class="col-12 px-0 col-md-4 col-lg-3 px-1">
-
-                                {%include "productCard.html"%}
-
-                            </div>
+                            {%endfor%}
                         </div>
                     </div>
                 </div>

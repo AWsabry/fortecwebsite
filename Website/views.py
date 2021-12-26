@@ -40,22 +40,79 @@ db = firestore.client()
 
 
 def index(request):
-    return render(request, 'index.html')
+    docsMostSold = db.collection('products').order_by(
+        'soldNo').limit_to_last(8).get()
+    passed_values_mostSold = [doc.to_dict() for doc in docsMostSold]
+    docsNewProducts = db.collection('products').order_by(
+        'date').limit_to_last(8).get()
+    for x in docsMostSold:
+        print(x)
+    passed_values_NewProducts = [doc.to_dict() for doc in docsNewProducts]
+
+    return render(request, 'index.html', {'mostSold': passed_values_mostSold, 'newProducts': passed_values_NewProducts})
 
 
-def signIn(request, msg=''):
+def signIn(request):
+    msg = ''
+    if request.method == 'POST':
+        try:
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            auth.sign_in_with_email_and_password(email, password)
+            userGet = db.collection('users').document(email)
+            usersdocs = userGet.get().to_dict()
+            request.session['name'] = usersdocs['firstName'] + ' '
+            + usersdocs.lastName
+            request.session['email'] = email
+            return redirect('index')
+        except Exception as e:
+            print(str(e))
+            msg = "Wrong email or password!"
+    else:
+        print("GET")
+    return render(request, 'signIn.html', {'msg': msg})
+
+
+def signUp(request):
+    msg = ''
+    if request.method == 'POST':
+        try:
+            firstName = request.POST.get('firstName')
+            lastName = request.POST.get('lastName')
+            phone = request.POST.get('phone')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            user = auth.create_user_with_email_and_password(email, password)
+            new_doc_ref = db.collection('users').document(email)
+            data = {
+                'firstName': firstName,
+                'lastName': lastName,
+                'Email': email,
+                'total': 0,
+                'phone': phone,
+                'uid': user,
+                'city': '',
+                'cart': [],
+            }
+            new_doc_ref.set(data),
+            session_id = user['idToken']
+            request.session['email'] = email
+            request.session['name'] = firstName + ' '+lastName
+            request.session['uid'] = str(session_id)
+            return redirect('index')
+        except Exception as e:
+            print(e)
+            msg = "Your password should be at least 6 char!"
+    else:
+        print("GET")
+    return render(request, 'signUp.html', {'msg': msg})
+
+
+def logout(request):
+    del request.session['name']
+    del request.session['uid']
+    del request.session['email']
     return render(request, 'signIn.html')
-
-
-def postSignIn(request):
-
-    try:
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        auth.sign_in_with_email_and_password(email, password)
-        return redirect('/', request)
-    except error:
-        return redirect(reverse('signin', args=request, kwargs={'msg': 'id'}))
 
 
 ''' def contacts(request):
@@ -100,6 +157,7 @@ def shop(request,):
 
     print(Email)
 
+
     # request.session['Email'] = Email
 
     for i in passed_values:
@@ -114,20 +172,21 @@ def shop(request,):
         "docs": passed_values,
     })
 
+'''
+# @login_session_required(login_url='contacts')
 
-@login_session_required(login_url='contacts')
+
 def productDetails(request, id):
-    Email = request.session['Email']
     ProductsGet = db.collection('products').document(str(id))
     doc = ProductsGet.get().to_dict()
 
-    userGet = db.collection('users').document(Email)
-    usersdocs = userGet.get().to_dict()
-
     if request.method == 'POST':
         try:
+            email = request.session['email']
+            userGet = db.collection('users').document(email)
+            usersdocs = userGet.get().to_dict()
             Quantity = request.POST.get('Quantity')
-            request.session['Email'] = Email
+            request.session['email'] = email
             cartItem = {
                 'ProductName': doc['name'],
                 'Quantity': int(Quantity),
@@ -154,6 +213,8 @@ def productDetails(request, id):
 
     return render(request, 'productDetails.html', {'ProductsGet': doc})
 
+
+'''
 
 @login_session_required(login_url='contacts')
 def checkout(request):
