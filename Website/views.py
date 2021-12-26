@@ -110,7 +110,10 @@ def signUp(request):
                 msg = "Password and confirm password doesn't match!"
         except Exception as e:
             print(e)
-            msg = "Your password should be at least 6 char!"
+            if('EXISTS' in str(e)):
+                msg = 'You email ecxists'
+            else:
+                msg = "Your password should be at least 6 char!"
     else:
         print("GET")
     return render(request, 'signUp.html', {'msg': msg})
