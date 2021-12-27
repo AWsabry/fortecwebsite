@@ -57,8 +57,7 @@ def index(request):
     passed_values_mostSold = [doc.to_dict() for doc in docsMostSold]
     docsNewProducts = db.collection('products').order_by(
         'date').limit_to_last(8).get()
-    for x in docsMostSold:
-        print(x)
+
     passed_values_NewProducts = [doc.to_dict() for doc in docsNewProducts]
 
     return render(request, 'index.html', {'mostSold': passed_values_mostSold, 'newProducts': passed_values_NewProducts, 'cartNo': cartNoFunction(request)})
@@ -105,7 +104,7 @@ def signUp(request):
                     'lastName': lastName,
                     'Email': email,
                     'total': 0,
-                    'phone': phone,
+                    'phoneNumber': phone,
                     'id': user,
                     'city': '',
                     'cart': [],
@@ -165,7 +164,6 @@ def products(request, category=''):
     else:
         docs = db.collection('products').get()
     result = [doc.to_dict() for doc in docs]
-    print(str(result))
     return render(request, 'shop.html', {'docs': result, 'cartNo': cartNoFunction(request)})
 
 
@@ -179,6 +177,39 @@ def cart(request):
 
     else:
         return redirect('login')
+
+
+def addProductToCart(request, id):
+    email = request.session['email']
+    user = db.collection('users').document(
+        email).get().to_dict()
+    cart = user['cart']
+    for i in range(len(cart)):
+        if (cart[i]['ProductID'] == id):
+            cart[i]['Quantity'] += 1
+
+            db.collection('users').document(email).update({
+                'total': user['total'] + cart[i]['Price'],
+                'cart': cart
+            })
+            return redirect('cart')
+
+
+def removeProductFromCart(request, id):
+    email = request.session['email']
+    user = db.collection('users').document(
+        email).get().to_dict()
+    cart = user['cart']
+    for i in range(len(cart)):
+        if (cart[i]['ProductID'] == id):
+
+            total = user['total'] - cart[i]['Price'] * cart[i]['Quantity']
+            cart.pop(i)
+            db.collection('users').document(email).update({
+                'total': total,
+                'cart': cart
+            })
+            return redirect('cart')
 
 
 ''' def contacts(request):
@@ -245,7 +276,7 @@ def shop(request,):
 def productDetails(request, id):
     ProductsGet = db.collection('products').document(str(id))
     doc = ProductsGet.get().to_dict()
-    print(request.session.keys())
+
     if request.method == 'POST':
         try:
             if len(request.session.keys()) > 0:
@@ -274,7 +305,6 @@ def productDetails(request, id):
                             usersdocs['cart'][d]['Quantity'] += 1
                             cart = usersdocs['cart']
                             break
-                print(cart)
                 userGet.update({
                     'cart': cart,
                     'total': total
@@ -290,20 +320,16 @@ def productDetails(request, id):
     return render(request, 'productDetails.html', {'ProductsGet': doc})
 
 
-'''
-
-@login_session_required(login_url='contacts')
 def checkout(request):
-    Email = request.session['Email']
+    Email = request.session['email']
     OrderNote = request.POST.get('OrderNote')
     userGet = db.collection('users').document(Email)
     usersdocs = userGet.get().to_dict()
-    print(Email)
     if request.method == 'POST':
         try:
             firstName = usersdocs['firstName']
             lastName = usersdocs['lastName']
-            PhoneNumber = usersdocs['PhoneNumber']
+            PhoneNumber = usersdocs['phoneNumber']
             cart = usersdocs['cart']
             total = usersdocs['total']
             ID = uuid.uuid4()
@@ -328,11 +354,8 @@ def checkout(request):
             print(str(e))
     else:
         print("GETTING")
-    return render(request, 'checkout.html', {'usersdocs': usersdocs})
+    return render(request, 'checkout.html', {'usersdocs': usersdocs, 'cartNo': cartNoFunction(request)})
 
 
-@login_session_required(login_url='contacts')
 def thankyou(request):
     return render(request, 'thankyou.html')
- '''
-# /home/XEatsNew/X-Eats-Website
