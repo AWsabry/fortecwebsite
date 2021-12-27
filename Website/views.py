@@ -40,6 +40,13 @@ auth = firebase.auth()
 db = firestore.client()
 
 
+def sendResetPassword(request):
+    if (request.method == 'POST'):
+        auth.send_password_reset_email(request.POST.get('email'))
+        return redirect('signin')
+    return render(request, 'forgetPassword.html')
+
+
 def cartNoFunction(request):
     if (request.session.keys()):
         cart = ((db.collection('users').document(
@@ -181,8 +188,7 @@ def cart(request):
 
 def addProductToCart(request, id):
     email = request.session['email']
-    user = db.collection('users').document(
-        email).get().to_dict()
+    user = db.collection('users').document(email).get().to_dict()
     cart = user['cart']
     for i in range(len(cart)):
         if (cart[i]['ProductID'] == id):
