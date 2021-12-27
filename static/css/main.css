@@ -27,6 +27,7 @@
 .color-white {
     color: white;
 }
+
 .button-custom {
     cursor: pointer;
     transition: all ease-in-out .2s !important;
@@ -151,4 +152,19 @@ img {
 }
 .theme-main-menu .contact-button.button-white-bg::before {
     background-color: #1f69b2;
+}
+.badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #fff !important;
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    text-align: center !important;
+    align-items: center !important;
+    align-content: center;
+    height: 20px;
+    width: auto;
+    aspect-ratio: 1;
 }

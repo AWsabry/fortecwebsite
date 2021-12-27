@@ -5,7 +5,7 @@
 
 
 
-<div class="full-width-container pt-250 pb-180 md-pt-100 md-pb-120">
+<div class="full-width-container pt-100 pb-180 md-pt-100 md-pb-120">
 
 	<!-- SHOP SHOWCASE -->
 	<div class="product-showcase">
@@ -17,8 +17,11 @@
 					<div class="card my-2">
 						<img class="card-img-top border-bottom" src="{%static '/images/01.png'%}" alt="Card image cap">
 						<div class="card-body px-1 ">
-							<h4 class="card-title text-center">{{docs.ProductName}}</h4>
-							<h5 class="card-text color-primary py-1 text-center">{{docs.Price}}<span>EGP</span></h5>
+							<h3 class="card-title text-center">{{docs.ProductName}}</h3>
+							<h4 class="card-text color-primary py-1 text-center">{{docs.Price}}<span>EGP</span></h4>
+							<div class="text-center h5">
+								Qt:{{docs.Quantity}}
+							</div>
 
 						</div>
 						<div class="text-center pt-3 pb-4 container d-flex justify-content-center">
@@ -30,18 +33,14 @@
 									Add
 								</span>
 							</a>
-							<span class="d-flex align-items-center px-1">
-								{{docs.Quantity}}
-							</span>
-							<a href="productremove{{docs.ProductName}}"
-								class="rounded-circle px-2 mx-2 bg-myprimary p-2 d-flex color-white align-items-center">
-								<span class="show-on-hover ">
-									Remove
-								</span>
-								<img src="{%static '/images/icon/remove-outline.svg'%}" width="30" height="30"
-									class="button-custom">
-							</a>
+
 						</div>
+						<a href="productremove{{docs.ProductName}}" class=" align-items-center d-flex">
+
+							Remove
+							</span>
+
+						</a>
 						<div class="bg-main loading">
 						</div>
 					</div>

@@ -40,6 +40,17 @@ auth = firebase.auth()
 db = firestore.client()
 
 
+def cartNoFunction(request):
+    if (request.session.keys()):
+        cart = ((db.collection('users').document(
+            request.session['email']).get()).to_dict()['cart'])
+        cartNo = 0
+        for product in cart:
+            cartNo += product['Quantity']
+
+        return(cartNo)
+
+
 def index(request):
     docsMostSold = db.collection('products').order_by(
         'soldNo').limit_to_last(8).get()
@@ -50,7 +61,7 @@ def index(request):
         print(x)
     passed_values_NewProducts = [doc.to_dict() for doc in docsNewProducts]
 
-    return render(request, 'index.html', {'mostSold': passed_values_mostSold, 'newProducts': passed_values_NewProducts})
+    return render(request, 'index.html', {'mostSold': passed_values_mostSold, 'newProducts': passed_values_NewProducts, 'cartNo': cartNoFunction(request)})
 
 
 def signIn(request):
@@ -62,7 +73,6 @@ def signIn(request):
             user = auth.sign_in_with_email_and_password(email, password)
             userGet = db.collection('users').document(email)
             usersdocs = userGet.get().to_dict()
-            request.session['uid'] = user
             request.session['name'] = usersdocs['firstName']
             request.session['email'] = email
             return redirect('index')
@@ -96,7 +106,7 @@ def signUp(request):
                     'Email': email,
                     'total': 0,
                     'phone': phone,
-                    'uid': user,
+                    'id': user,
                     'city': '',
                     'cart': [],
                 }
@@ -104,7 +114,7 @@ def signUp(request):
                 session_id = user['idToken']
                 request.session['email'] = email
                 request.session['name'] = firstName + ' '+lastName
-                request.session['uid'] = str(session_id)
+
                 return redirect('index')
             else:
                 msg = "Password and confirm password doesn't match!"
@@ -121,9 +131,8 @@ def signUp(request):
 
 def logout(request):
     del request.session['name']
-    del request.session['uid']
     del request.session['email']
-    return render(request, 'signIn.html')
+    return render(request, 'signIn.html', {'cartNo': cartNoFunction(request)})
 
 
 def categories(request):
@@ -146,7 +155,7 @@ def categories(request):
         },
 
     ]
-    return render(request, 'categories.html', {'categories': categories})
+    return render(request, 'categories.html', {'categories': categories, 'cartNo': cartNoFunction(request)})
 
 
 def products(request, category=''):
@@ -157,7 +166,7 @@ def products(request, category=''):
         docs = db.collection('products').get()
     result = [doc.to_dict() for doc in docs]
     print(str(result))
-    return render(request, 'shop.html', {'docs': result})
+    return render(request, 'shop.html', {'docs': result, 'cartNo': cartNoFunction(request)})
 
 
 def cart(request):
@@ -166,7 +175,7 @@ def cart(request):
         doc = db.collection('users').document(request.session['email']).get()
         cart = doc.to_dict()
         print(cart)
-        return render(request, 'cart.html', {'cart': cart})
+        return render(request, 'cart.html', {'cart': cart, 'cartNo': cartNoFunction(request)})
 
     else:
         return redirect('login')
