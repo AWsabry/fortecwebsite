@@ -104,6 +104,20 @@
 						<a class="list-nav nav-item nav-link" href="/categories">Categories</a>
 						<a class="list-nav nav-item nav-link" href="/products">Products</a>
 
+						<form class="d-flex align-items-center justify-content-end my-md-0" method="post"
+							action="products">
+							{% csrf_token %}
+							<div class=" input-group my-auto search theme-btn .contact-button">
+
+								<input type="search" name="search" class="border-none form-control">
+								<div class="input-group-append">
+									<button class="btn border-none" type=" submit"><img
+											src="{%static '/images/icon/search-outline.svg'%}" width="24"
+											height="24"></button>
+								</div>
+							</div>
+
+						</form>
 					</div>
 
 					<div class="col-12 col-md-4 right-content ml-auto order-lg-3 d-flex flex-end">
