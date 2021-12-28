@@ -41,11 +41,14 @@ db = firestore.client()
 
 
 def sendResetPassword(request):
-
+    msg = ''
     if (request.method == 'POST'):
-        auth.send_password_reset_email(request.POST.get('email'))
-        return redirect('signin')
-    return render(request, 'forgetPassword.html')
+        try:
+            auth.send_password_reset_email(request.POST.get('email'))
+            msg = 'Check Your email to reset the password!'
+        except Exception as e:
+            msg = "Wrong email!"
+    return render(request, 'forgetPassword.html', {'msg': msg})
 
 
 def cartNoFunction(request):
