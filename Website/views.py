@@ -10,7 +10,7 @@ import uuid
 from oauth2client.client import Error
 from pyasn1.type.univ import Null
 import pyrebase
-
+import numpy as np
 import json
 from .decorators import login_session_required
 
@@ -41,6 +41,7 @@ db = firestore.client()
 
 
 def sendResetPassword(request):
+
     if (request.method == 'POST'):
         auth.send_password_reset_email(request.POST.get('email'))
         return redirect('signin')
@@ -165,12 +166,37 @@ def categories(request):
 
 
 def products(request, category=''):
-    if (len(category)):
-        docs = db.collection('products').where(
-            'category', '==', category).get()
-    else:
+    result = []
+    if request.method == 'POST':
+        query = request.POST.get('search').split()
         docs = db.collection('products').get()
-    result = [doc.to_dict() for doc in docs]
+        products = [doc.to_dict() for doc in docs]
+        for product in products:
+            score = 0
+            for q in query:
+                print(2)
+                eachEinQ = np.array(list(q.lower()))
+                inP = np.array((product['name']).lower().split(' '))
+                for p in inP:
+                    if(len(np.intersect1d(list(p), eachEinQ)) > len(p)/2):
+                        score += 1
+                    if len(np.intersect1d(list(p), eachEinQ)) == len(p):
+                        score += 5
+            if score > 0:
+                product['score'] = score
+                result.append(product)
+
+            def sortFunc(e):
+                return e['score']
+            result.sort(key=sortFunc, reverse=True)
+
+    else:
+        if (len(category)):
+            docs = db.collection('products').where(
+                'category', '==', category).get()
+        else:
+            docs = db.collection('products').get()
+        result = [doc.to_dict() for doc in docs]
     return render(request, 'shop.html', {'docs': result, 'cartNo': cartNoFunction(request)})
 
 
