@@ -176,14 +176,13 @@ img {
 
 }
 .search {
-    min-width: 200px;
     background: #fff;
     border: none !important;
     padding: 0 !important;
     margin-left: 20px !important;
     border-radius: .25rem;
     overflow: hidden;
-    max-width: 250px;
+    width: 300px;
     box-shadow: 0px 5px 20px 0px rgb(0 0 0 / 10%) !important;
 }
 .search input {

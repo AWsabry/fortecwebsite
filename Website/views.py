@@ -131,14 +131,15 @@ def signUp(request):
         except Exception as e:
             print(e)
             if('EXISTS' in str(e)):
-                msg = 'You email ecxists'
+                msg = 'Your email exists'
             else:
                 msg = "Your password should be at least 6 char!"
     else:
         print("GET")
-    return render(request, 'signUp.html', {'msg': msg})
+    return render(request, 'signUp.html', {'msg': msg, })
 
 
+@login_session_required(login_url='logout')
 def logout(request):
     del request.session['name']
     del request.session['email']
@@ -146,25 +147,9 @@ def logout(request):
 
 
 def categories(request):
-    categories = [
-        {
-            'name': 'mostsold',
-            'img': 'any.png'
-        },
-        {
-            'name': 'Second Category',
-            'img': 'any.png'
-        },
-        {
-            'name': 'Third Category',
-            'img': 'any.png'
-        },
-        {
-            'name': 'Fourth Category',
-            'img': 'any.png'
-        },
+    docs = db.collection('categories').get()
+    categories = [doc.to_dict() for doc in docs]
 
-    ]
     return render(request, 'categories.html', {'categories': categories, 'cartNo': cartNoFunction(request)})
 
 
@@ -203,12 +188,15 @@ def products(request, category=''):
     return render(request, 'shop.html', {'docs': result, 'cartNo': cartNoFunction(request)})
 
 
+@login_session_required(login_url='cart')
 def cart(request):
     if (len(request.session.keys()) > 0):
         print(request.session['email'])
         doc = db.collection('users').document(request.session['email']).get()
         cart = doc.to_dict()
-        print(cart)
+        for i in range(len(cart['cart'])):
+            cart['cart'][i]['total'] = (
+                cart['cart'][i]['Price']) * (cart['cart'][i]['Quantity'])
         return render(request, 'cart.html', {'cart': cart, 'cartNo': cartNoFunction(request)})
 
     else:
@@ -245,67 +233,6 @@ def removeProductFromCart(request, id):
                 'cart': cart
             })
             return redirect('cart')
-
-
-''' def contacts(request):
-    if request.method == 'POST':
-        try:
-            firstName = request.POST.get('firstName')
-            lastName = request.POST.get('lastName')
-            Email = request.POST.get('Email')
-            # Password = request.POST.get('Password')
-            PhoneNumber = request.POST.get('PhoneNumber')
-            old_auth = firebase.auth()
-            XEats_User = old_auth.create_user_with_email_and_password(
-                Email, 'Password')
-            user = old_auth.refresh(XEats_User['refreshToken'])
-            ID = uuid.uuid4()
-            request.session['Email'] = Email
-            new_doc_ref = db.collection('users').document(Email)
-            new_doc_ref.set({
-                'firstName': firstName,
-                'lastName': lastName,
-                'Email & ID': Email,
-                'total': 0,
-                'PhoneNumber': PhoneNumber,
-                'cart': [],
-            }),
-
-            return redirect('shop')
-        except Exception as e:
-            print(str(e))
-    else:
-        print("GETTING")
-    return render(request, 'contacts.html')
- '''
-'''
-@login_session_required(login_url='contacts')
-def shop(request,):
-    from google.cloud import firestore
-    docs = db.collection(u'products').stream()
-    auth = firebase.auth()
-    passed_values = [doc.to_dict() for doc in docs]
-    Email = request.session['Email']
-
-    print(Email)
-
-
-    # request.session['Email'] = Email
-
-    for i in passed_values:
-        id = i['id']
-        productName = i['name']
-        price = i['price']
-        category = i['category']
-
-    if request.method == 'POST':
-        redirect('productDetails', {'id': id, })
-    return render(request, 'shop.html', {
-        "docs": passed_values,
-    })
-
-'''
-# @login_session_required(login_url='contacts')
 
 
 def productDetails(request, id):
@@ -355,9 +282,12 @@ def productDetails(request, id):
     return render(request, 'productDetails.html', {'ProductsGet': doc})
 
 
+@login_session_required(login_url='checkout')
 def checkout(request):
     Email = request.session['email']
     OrderNote = request.POST.get('OrderNote')
+    address = request.POST.get('address')
+    city = request.POST.get('city')
     userGet = db.collection('users').document(Email)
     usersdocs = userGet.get().to_dict()
     if request.method == 'POST':
@@ -373,11 +303,13 @@ def checkout(request):
                 'firstName': firstName,
                 'lastName': lastName,
                 'Email': Email,
-                'price': total + 5,
+                'price': total,
                 'PhoneNumber': PhoneNumber,
                 'OrderNote': OrderNote,
                 'cart': cart,
                 'Paid': False,
+                'City': city,
+                'Address': address,
                 'CreatedAt': datetime.now()
             }),
             userGet.update({
@@ -394,3 +326,8 @@ def checkout(request):
 
 def thankyou(request):
     return render(request, 'thankyou.html')
+
+
+def error_404_view(request, exception):
+    data = {"name": "ThePythonDjango.com"}
+    return render(request, 'error404.html', data)

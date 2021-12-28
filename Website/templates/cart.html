@@ -17,6 +17,7 @@
 					Checkout</a>
 				{%endif%}
 			</div>
+			{% if cart.cart %}
 			<div class="row">
 				{% for docs in cart.cart %}
 				<div class="col-12  col-md-4 col-lg-3 px-1">
@@ -28,8 +29,12 @@
 							<div class="text-center h5">
 								Qt:{{docs.Quantity}}
 							</div>
+							<div class="text-center text-muted card-text">
+								Total:{{docs.total}}
+							</div>
 
 						</div>
+
 						<div class="text-center pt-3 pb-4 container d-flex justify-content-center">
 							<a href='productadd{{docs.ProductID}}'
 								class="rounded-circle px-2 mx-2 bg-main p-2 d-flex color-white align-items-center">
@@ -53,6 +58,13 @@
 				</div>
 				{% endfor %}
 			</div>
+			{% else %}
+			<div class="my-4 text-center">
+				Your Cart is empty go to <a href="products">
+					products
+				</a> page
+			</div>
+			{%endif%}
 
 		</div>
 

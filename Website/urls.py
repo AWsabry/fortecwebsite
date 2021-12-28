@@ -1,6 +1,6 @@
 from django.urls import path, include
 from . import views
-
+from django.conf.urls import handler404
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -21,11 +21,4 @@ urlpatterns = [
     path('products<category>',
          views.products,  name='productsByCategory'),
     path('product<id>', views.productDetails,  name='productdetails'),
-
 ]
-''' path('shop', views.shop, name='shop'),
-    path('thankyou', views.thankyou, name='thankyou'),
-    path('checkout', views.checkout, name='checkout'),
-    path('contacts', views.contacts, name='contacts'),
-    path('<int:id>', views.productDetails, name='productDetails')
- '''

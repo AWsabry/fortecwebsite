@@ -6,6 +6,7 @@ from django.shortcuts import resolve_url
 
 from Website import views
 
+
 def user_passes_test(test_func=None, login_url=None):
     """
     Decorator for views that checks that the user passes the given test,
@@ -26,9 +27,9 @@ def user_passes_test(test_func=None, login_url=None):
 
 def login_session_required(test_func=None, login_url=None):
     actual_decorator = user_passes_test(
-        lambda session: session.get('Email'),
-        login_url='contacts'
-        )
+        lambda session: session.get('email'),
+        login_url='signin'
+    )
     if test_func:
         return actual_decorator(test_func)
     return actual_decorator
